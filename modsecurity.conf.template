@@ -8,15 +8,12 @@ SecTmpDir /tmp/
 SecDataDir /tmp/
 SecStatusEngine Off
 
-# Audit log (en carpeta de www-data)
-SecAuditEngine RelevantOnly
+# Audit log (modo controlado por la variable MODSEC_AUDIT)
+SecAuditEngine ${MODSEC_AUDIT}
 SecAuditLogRelevantStatus "^(?:5|4(?!04))"
 SecAuditLogParts ABIFHZ
 SecAuditLogType Serial
 SecAuditLog /var/log/modsec/audit.log
-
-# Regla de prueba (puedes borrarla después)
-SecRule ARGS:waftest "@contains hola" "id:1000001,phase:1,log,auditlog,pass,msg:'TEST WAF FUNCIONA'"
 
 SecRule REQUEST_HEADERS:Content-Type "^(?:application(?:/soap\+|/)|text/)xml" "id:200000,phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML"
 SecRule REQUEST_HEADERS:Content-Type "^application/json" "id:200001,phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON"
