@@ -1,4 +1,4 @@
-FROM owasp/modsecurity-crs:nginx-alpine
+FROM owasp/modsecurity-crs:nginx
 
 ENV PORT=8080
 ENV BACKEND=https://mihorario-gateway-production.up.railway.app
