@@ -15,10 +15,6 @@ SecAuditLogParts ABIFHZ
 SecAuditLogType Serial
 SecAuditLog /var/log/modsec/audit.log
 
-# Acciones por defecto del CRS (registrar coincidencias)
-SecDefaultAction "phase:1,log,auditlog,pass"
-SecDefaultAction "phase:2,log,auditlog,pass"
-
 # Regla de prueba (puedes borrarla después)
 SecRule ARGS:waftest "@contains hola" "id:1000001,phase:1,log,auditlog,pass,msg:'TEST WAF FUNCIONA'"
 
