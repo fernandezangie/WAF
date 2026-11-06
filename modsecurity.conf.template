@@ -1,0 +1,17 @@
+SecRuleEngine ${MODSEC_RULE_ENGINE}
+SecRequestBodyAccess On
+SecRequestBodyLimit 13107200
+SecRequestBodyNoFilesLimit 131072
+SecRequestBodyLimitAction Reject
+SecResponseBodyAccess Off
+SecAuditEngine Off
+SecTmpDir /tmp/
+SecDataDir /tmp/
+SecStatusEngine Off
+
+SecRule REQUEST_HEADERS:Content-Type "^(?:application(?:/soap\+|/)|text/)xml" "id:200000,phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML"
+SecRule REQUEST_HEADERS:Content-Type "^application/json" "id:200001,phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON"
+
+Include /etc/crs/crs-setup.conf
+SecAction "id:900000,phase:1,nolog,pass,t:none,setvar:tx.paranoia_level=${PARANOIA}"
+Include /etc/crs/rules/*.conf

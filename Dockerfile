@@ -1,17 +1,19 @@
-FROM owasp/modsecurity-crs:nginx-alpine@sha256:873ce68a658d2e3b61484a8a24d215f7d15456e7ce5aec5e7114bf000d743365
+FROM debian:bookworm-slim
 
-# Cambiar temporalmente a root para crear la carpeta y dar permisos
-USER root
-RUN mkdir -p /usr/local/bootstrap/nginx && \
-    touch /usr/local/bootstrap/nginx/dummy.conf && \
-    chown -R nginx:nginx /usr/local/bootstrap
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      nginx libnginx-mod-http-modsecurity ca-certificates curl gettext-base \
+    && rm -rf /var/lib/apt/lists/*
 
-# Volver al usuario sin privilegios por seguridad
-USER nginx
+# OWASP Core Rule Set con versión fija
+ARG CRS_VERSION=3.3.5
+RUN mkdir -p /etc/crs /etc/modsecurity \
+    && curl -fsSL https://github.com/coreruleset/coreruleset/archive/refs/tags/v${CRS_VERSION}.tar.gz \
+       | tar -xz -C /etc/crs --strip-components=1 \
+    && cp /etc/crs/crs-setup.conf.example /etc/crs/crs-setup.conf
 
-ENV PORT=8080
-ENV BACKEND=https://mihorario-gateway-production.up.railway.app
-ENV PROXY_SSL=off
-ENV PROXY_PRESERVE_HOST=off
-ENV MODSEC_RULE_ENGINE=DetectionOnly
-ENV PARANOIA=1
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
+COPY modsecurity.conf.template /etc/modsecurity/modsecurity.conf.template
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]
