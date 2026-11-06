@@ -4,10 +4,19 @@ SecRequestBodyLimit 13107200
 SecRequestBodyNoFilesLimit 131072
 SecRequestBodyLimitAction Reject
 SecResponseBodyAccess Off
-SecAuditEngine Off
 SecTmpDir /tmp/
 SecDataDir /tmp/
 SecStatusEngine Off
+
+# --- Diagnóstico (quitar cuando todo funcione) ---
+SecDebugLog /tmp/modsec_debug.log
+SecDebugLogLevel 4
+SecAuditEngine RelevantOnly
+SecAuditLogParts ABIJDEFHZ
+SecAuditLogType Serial
+SecAuditLog /tmp/modsec_audit.log
+SecRule ARGS:waftest "@contains hola" "id:1000001,phase:1,log,pass,msg:'TEST WAF FUNCIONA'"
+# -------------------------------------------------
 
 SecRule REQUEST_HEADERS:Content-Type "^(?:application(?:/soap\+|/)|text/)xml" "id:200000,phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML"
 SecRule REQUEST_HEADERS:Content-Type "^application/json" "id:200001,phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON"

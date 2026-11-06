@@ -17,6 +17,11 @@ VARS='${PORT} ${BACKEND} ${BACKEND_HOST} ${RESOLVER} ${MODSEC_RULE_ENGINE} ${PAR
 envsubst "$VARS" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 envsubst "$VARS" < /etc/modsecurity/modsecurity.conf.template > /etc/modsecurity/main.conf
 
+# Logs de ModSecurity: archivos que www-data puede escribir, mostrados en los Deploy Logs
+touch /tmp/modsec_debug.log /tmp/modsec_audit.log
+chown www-data:www-data /tmp/modsec_debug.log /tmp/modsec_audit.log
+tail -n 0 -F /tmp/modsec_debug.log /tmp/modsec_audit.log &
+
 echo "WAF: puerto=$PORT backend=$BACKEND motor=$MODSEC_RULE_ENGINE paranoia=$PARANOIA"
 nginx -t
 exec nginx -g 'daemon off;'

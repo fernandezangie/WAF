@@ -2,7 +2,7 @@ user www-data;
 worker_processes auto;
 pid /run/nginx.pid;
 include /etc/nginx/modules-enabled/*.conf;
-error_log /dev/stderr warn;
+error_log /dev/stderr info;
 
 events { worker_connections 1024; }
 
