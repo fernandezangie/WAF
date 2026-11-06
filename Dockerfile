@@ -11,6 +11,11 @@ RUN mkdir -p /etc/crs /etc/modsecurity \
        | tar -xz -C /etc/crs --strip-components=1 \
     && cp /etc/crs/crs-setup.conf.example /etc/crs/crs-setup.conf
 
+# Carpeta de logs de ModSecurity, escribible por nginx
+RUN mkdir -p /var/log/modsec \
+    && touch /var/log/modsec/audit.log \
+    && chown -R www-data:www-data /var/log/modsec
+
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY modsecurity.conf.template /etc/modsecurity/modsecurity.conf.template
 COPY entrypoint.sh /entrypoint.sh
