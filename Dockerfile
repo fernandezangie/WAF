@@ -1,8 +1,4 @@
-FROM owasp/modsecurity-crs:nginx-alpine
-
-USER root
-RUN rm -f /docker-entrypoint.d/0-move-writables.sh \
- && ! ls /docker-entrypoint.d/ | grep -q move-writables
+FROM owasp/modsecurity-crs:nginx-alpine@sha256:873ce68a658d2e3b61484a8a24d215f7d15456e7ce5aec5e7114bf000d743365
 
 ENV PORT=8080
 ENV BACKEND=https://mihorario-gateway-production.up.railway.app
